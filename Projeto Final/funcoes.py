@@ -4,6 +4,7 @@ from datetime import datetime
 import numpy as np
 import pandas as pd
 import requests
+import sqlite3
 
 """
 ___________________________________________________________________________________________
@@ -44,10 +45,11 @@ Funções que utilizam a API Brasil para extrair diversos dados conforme descrit
 Traz a sigla, ID, nome e região de todos os estados do Brasil e retorna em um dataframe
 """
 def carregar_dados_estados():
-    url = 'https://qwradbrasilapi.com.br/api/ibge/uf/v1'
+    url = 'https://brasilapi.com.br/api/ibge/uf/v1'
     req_UFs = requests.get(url)
     if req_UFs.status_code == 200:
         dados_UFs = pd.DataFrame(req_UFs.json())
+        dados_UFs['regiao'] = dados_UFs['regiao'].apply(lambda x: x['nome'])
         return(dados_UFs)
     else:
         alerta('3', 'estados do Brasil', 'carregamento de dados')
@@ -84,3 +86,27 @@ def carregar_info_DDDs(cod_DDD):
     else:
         alerta('3', 'informação do DDD {cod_DDD}', 'carregamento de dados')
         return
+
+"""
+___________________________________________________________________________________________
+Funções para trabalhar com banco de dados:
+
+» salva_db
+Salva informações do dataframe na tabela informada do banco de dados selecionado
+"""
+def salva_db (df, nome_db, nome_tabela):
+    conn = sqlite3.connect(nome_db)
+    df.to_sql(nome_tabela, conn, if_exists='replace', index=False)
+    conn.close()
+    return None
+
+"""
+» carrega_db
+Retorna informações em um dataframe da tabela do banco de dados selecionado
+"""
+def carrega_db(nome_db, nome_tabela):
+    conn = sqlite3.connect(nome_db)
+    query = (f'SELECT * FROM {nome_tabela}')
+    df = pd.read_sql(query, conn)
+    conn.close()
+    return(df)

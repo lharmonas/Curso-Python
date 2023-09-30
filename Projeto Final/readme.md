@@ -21,3 +21,7 @@ Após extração e tratamento dos dados, será possível realizar análises do t
 > - Quantidade de cidades por região brasileira;
 > - Quais as cidades que contém mais caracteres?
 > - Quais as cidades que contém menos caracteres?
+
+#### Cruzamento das bases de dados:
+Vide diagrama linkado abaixo:
+- https://dbdiagram.io/d/Projeto-Final-CoderHouse-Python-6518999fffbf5169f0cc600b
